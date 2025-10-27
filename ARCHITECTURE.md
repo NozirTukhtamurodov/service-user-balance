@@ -32,25 +32,32 @@ env:
 
 ### Требования к соседним сервисам
 - Передача **Idempotency-Key** в заголовках HTTP запросов
+- Передача **X-Trace-Id** для отслеживания цепочки запросов в distributed tracing
 - Обработка статус-кодов: 409 (Conflict), 400 (идемпотентная ошибка)
 - Retry логика с экспоненциальным backoff
+
+### Рекомендации для внутренних сервисов
+- **Trace ID propagation**: Прокидывание trace_id через все HTTP/gRPC вызовы
+- **Structured logging**: Логирование с trace_id для корреляции запросов
+- **OpenTelemetry**: Стандартизированное трейсинг между микросервисами
 
 ## 3. Уведомление других сервисов
 
 ### Event-driven подход
 ```python
 # После успешной транзакции
-async def notify_services(transaction: TransactionResponse):
+async def notify_services(transaction: TransactionResponse, trace_id: str):
     event = {
         "event_type": "transaction_created",
         "user_id": transaction.user_id,
         "amount": transaction.amount,
         "new_balance": user.balance,
-        "timestamp": transaction.created_at
+        "timestamp": transaction.created_at,
+        "trace_id": trace_id  # Для отслеживания цепочки операций
     }
     
-    # Message Queue (RabbitMQ/Kafka)
-    await message_broker.publish("transactions", event)
+    # Message Queue (RabbitMQ/Kafka) с trace context
+    await message_broker.publish("transactions", event, headers={"X-Trace-Id": trace_id})
     
     # HTTP Webhooks (для критичных сервисов)
     await webhook_client.notify(ADVERTISING_SERVICE_URL, event)
@@ -66,8 +73,9 @@ async def notify_services(transaction: TransactionResponse):
 
 ### Мониторинг
 - **Prometheus + Grafana**: Метрики приложения и инфраструктуры
-- **Jaeger/Zipkin**: Distributed tracing для анализа производительности
-- **ELK Stack**: Централизованные логи с поиском и алертами
+- **Jaeger/Zipkin**: Distributed tracing с trace_id для отслеживания запросов
+- **ELK Stack**: Централизованные логи с correlation_id и trace_id
+- **OpenTelemetry**: Автоматическое инструментирование HTTP/gRPC вызовов
 
 ### Ключевые метрики
 - Latency: P50, P95, P99 времени ответа API

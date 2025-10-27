@@ -26,7 +26,7 @@ env:
 ## 2. Гарантия обработки транзакции ровно 1 раз
 
 ### Реализованные механизмы
-- **Idempotency Service**: Redis-кеширование с уникальными ключами
+- **Idempotency Service**: Redis-хранилище состояний операций с уникальными ключами
 - **Database Transactions**: Атомарные операции с SELECT FOR UPDATE
 - **UUID Transaction IDs**: Предотвращение дублирования
 

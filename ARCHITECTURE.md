@@ -72,17 +72,26 @@ async def notify_services(transaction: TransactionResponse, trace_id: str):
 ## 4. Контроль качества работы сервиса
 
 ### Мониторинг
-- **Prometheus + Grafana**: Метрики приложения и инфраструктуры
-- **DataDog/Jaeger/Zipkin**: Distributed tracing с trace_id для отслеживания запросов
-- **ELK Stack**: Централизованные логи с correlation_id и trace_id
-- **OpenTelemetry**: Автоматическое инструментирование HTTP/gRPC вызовов
+- **DataDog** (рекомендуется): All-in-one решение с метриками, логами, traces и APM
+- **Prometheus + Grafana**: Альтернативное open-source решение для метрик
+- **Jaeger/Zipkin**: Distributed tracing (если не используется DataDog APM)
+- **ELK Stack**: Централизованные логи (альтернатива DataDog Logs)
+- **OpenTelemetry**: Стандартизированное инструментирование для всех решений
+
+### Преимущества DataDog
+- **Unified Platform**: Метрики, логи, traces, алерты в одном интерфейсе
+- **APM Integration**: Автоматический trace_id correlation между логами и traces
+- **Infrastructure Monitoring**: K8s pods, containers, databases из коробки
+- **Custom Dashboards**: Business метрики и SLA мониторинг
+- **Intelligent Alerting**: ML-based anomaly detection
 
 ### Ключевые метрики
 - Latency: P50, P95, P99 времени ответа API
 - Error Rate: 4xx/5xx ошибки по endpoints
 - Throughput: RPS по операциям
 - Database: Connection pool, query duration
-- Redis: Cache hit rate, idempotency conflicts
+- Redis: Idempotency conflicts, connection pool
+- Business: Successful transactions/minute, revenue per transaction
 
 ### Качество кода
 - **Pre-commit hooks**: Black, isort, mypy, flake8

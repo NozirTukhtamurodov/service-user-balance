@@ -23,7 +23,40 @@ env:
         key: password
 ```
 
-## 2. Гарантия обработки транзакции ровно 1 раз
+## 2. Кеширование для повышения производительности
+
+### Рекомендации по кешированию
+- **Read-only операции**: Кеширование GET /users/{id}, GET /transactions/{uid}
+- **Статические данные**: Пользовательская информация (имя, дата создания)
+- **НЕ кешировать**: Баланс пользователя (критичные финансовые данные)
+- **Cache-aside pattern**: Проверка кеша → БД → обновление кеша
+
+### Стратегии кеширования
+```python
+# ✅ Безопасное кеширование пользователя (только статические данные)
+@cache(key="user:{user_id}", ttl=600)  # 10 минут
+async def get_user_info_cached(user_id: str) -> UserInfo:
+    user = await user_repository.get_by_id(user_id)
+    # Кешируем только неизменяемые данные
+    return UserInfo(id=user.id, name=user.name, created_at=user.created_at)
+
+# ❌ НЕ кешировать баланс - риск несогласованности данных
+# Баланс должен всегда читаться из БД для обеспечения консистентности
+async def get_user_balance(user_id: str) -> Decimal:
+    return await transaction_repository.get_user_current_balance(user_id)
+```
+
+### Инвалидация кеша
+- **TTL-based**: Автоматическое истечение для статических данных
+- **Event-based**: Инвалидация при изменении пользовательской информации
+- **Tag-based**: Групповая инвалидация по пользователям
+
+### ⚠️ Важно: Финансовые данные
+- **Баланс**: Всегда читать из БД, никогда не кешировать
+- **Транзакции**: Кешировать только после подтверждения записи в БД
+- **Консистентность**: Приоритет точности данных над производительностью
+
+## 3. Гарантия обработки транзакции ровно 1 раз
 
 ### Реализованные механизмы
 - **Idempotency Service**: Redis-хранилище состояний операций с уникальными ключами
@@ -41,7 +74,7 @@ env:
 - **Structured logging**: Логирование с trace_id для корреляции запросов
 - **OpenTelemetry**: Стандартизированное трейсинг между микросервисами
 
-## 3. Уведомление других сервисов
+## 4. Уведомление других сервисов
 
 ### Event-driven подход
 ```python
@@ -69,7 +102,7 @@ async def notify_services(transaction: TransactionResponse, trace_id: str):
 - **Retry механизм**: Повторные попытки при сбоях
 - **Dead Letter Queue**: Обработка неуспешных уведомлений
 
-## 4. Контроль качества работы сервиса
+## 5. Контроль качества работы сервиса
 
 ### Мониторинг
 - **DataDog** (рекомендуется): All-in-one решение с метриками, логами, traces и APM
@@ -89,8 +122,9 @@ async def notify_services(transaction: TransactionResponse, trace_id: str):
 - Latency: P50, P95, P99 времени ответа API
 - Error Rate: 4xx/5xx ошибки по endpoints
 - Throughput: RPS по операциям
-- Database: Connection pool, query duration
+- Database: Connection pool, query duration, slow queries
 - Redis: Idempotency conflicts, connection pool
+- Cache: Hit rate, miss rate, eviction rate, average response time
 - Business: Successful transactions/minute, revenue per transaction
 
 ### Качество кода
@@ -99,7 +133,7 @@ async def notify_services(transaction: TransactionResponse, trace_id: str):
 - **Coverage**: Минимум 90% покрытия кода тестами
 - **Security scanning**: Проверка зависимостей на уязвимости
 
-## 5. Гарантия неотрицательного баланса
+## 6. Гарантия неотрицательного баланса
 
 ### Реализованная защита
 ```python
@@ -125,4 +159,3 @@ async with transaction():
 2. **Application Level**: Валидация в бизнес-логике
 3. **Concurrent Safety**: SELECT FOR UPDATE блокировка
 4. **Transaction Atomicity**: Rollback при любой ошибке
-

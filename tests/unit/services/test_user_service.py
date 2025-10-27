@@ -2,8 +2,9 @@
 Unit tests for UserService.
 """
 
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from app.services.user_service import UserService
 

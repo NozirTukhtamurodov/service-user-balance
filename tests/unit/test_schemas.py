@@ -1,6 +1,7 @@
-import pytest
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+
+import pytest
 from pydantic import ValidationError
 
 from app import schemas

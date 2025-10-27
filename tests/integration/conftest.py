@@ -4,23 +4,23 @@ Integration test configuration and fixtures.
 
 import asyncio
 import os
-import pytest
-import pytest_asyncio
 from decimal import Decimal
 from typing import AsyncGenerator
-from httpx import AsyncClient
-import sqlalchemy as sa
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from fastapi import FastAPI
-import redis.asyncio as redis
 
-from app.application import AppBuilder
+import pytest
+import pytest_asyncio
+import redis.asyncio as redis
+import sqlalchemy as sa
+from fastapi import FastAPI
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.api.base import get_db, get_settings
-from app.models import Base, User, Transaction
+from app.application import AppBuilder
+from app.models import Base, Transaction, User
 from app.settings import Settings
 from app.types import TransactionType
 from app.utils import RedisIdempotencyStorage, get_idempotency_storage
-
 
 # Test database configuration - use environment variable or fallback
 TEST_DATABASE_URL = os.getenv(
@@ -113,7 +113,7 @@ async def app(
 ) -> AsyncGenerator[FastAPI, None]:
     """Create FastAPI application for testing."""
     # Import here to avoid circular imports
-    from app.utils import set_test_idempotency_storage, reset_idempotency_storage
+    from app.utils import reset_idempotency_storage, set_test_idempotency_storage
 
     # Set the global test storage
     set_test_idempotency_storage(test_idempotency_storage)

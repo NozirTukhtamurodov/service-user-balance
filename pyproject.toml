@@ -23,6 +23,7 @@ asyncpg = "*"
 uvloop = "*"
 black = "^25.9.0"
 redis = "*"
+isort = "^7.0.0"
 
 [tool.poetry.group.dev.dependencies]
 polyfactory = "*"

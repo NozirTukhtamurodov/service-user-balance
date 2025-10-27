@@ -2,16 +2,16 @@
 Common test fixtures and configuration for pytest.
 """
 
-import pytest
+from datetime import datetime, timezone
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock, Mock
-from datetime import datetime, timezone
 from uuid import uuid4
 
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+import pytest
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app import schemas
-from app.models import User, Transaction
+from app.models import Transaction, User
 from app.types import TransactionType
 
 

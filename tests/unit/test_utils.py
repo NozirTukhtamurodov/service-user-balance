@@ -1,12 +1,10 @@
 """Tests for utility functions and classes."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from app.utils import (
-    RedisIdempotencyStorage,
-    get_idempotency_storage,
-)
+import pytest
+
+from app.utils import RedisIdempotencyStorage, get_idempotency_storage
 
 
 class TestRedisIdempotencyStorage:

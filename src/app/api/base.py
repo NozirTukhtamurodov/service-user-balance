@@ -1,20 +1,22 @@
 from typing import Annotated, Optional
+from uuid import uuid4
 
-from fastapi import Depends, HTTPException, status, Header
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    AsyncSession as AsyncSessionType,
-)
+from fastapi import Depends, Header, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession as AsyncSessionType
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app import schemas
 from app.models import User
+from app.services.idempotency_service import IdempotencyService
 from app.services.transaction_service import TransactionService
 from app.services.user_service import UserService
-from app.services.idempotency_service import IdempotencyService
 from app.settings import Settings
-from app.utils import get_idempotency_storage, IdempotencyRecord, IdempotencyStatus
-from app.utils import RedisIdempotencyStorage
-from uuid import uuid4
+from app.utils import (
+    IdempotencyRecord,
+    IdempotencyStatus,
+    RedisIdempotencyStorage,
+    get_idempotency_storage,
+)
 
 
 def get_settings() -> Settings:

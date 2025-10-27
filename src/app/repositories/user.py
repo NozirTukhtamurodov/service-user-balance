@@ -1,12 +1,10 @@
 import logging
 from typing import Optional
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    AsyncSession as AsyncSessionType,
-)
 import sqlalchemy as sa
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession as AsyncSessionType
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app import schemas
 from app.exceptions import UserExistsError

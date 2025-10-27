@@ -1,10 +1,8 @@
 import logging
 from typing import Optional
 
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    AsyncSession as AsyncSessionType,
-)
+from sqlalchemy.ext.asyncio import AsyncSession as AsyncSessionType
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app import schemas
 from app.models import User

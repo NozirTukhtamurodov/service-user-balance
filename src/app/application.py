@@ -2,22 +2,18 @@ import contextlib
 import typing
 
 import fastapi
+from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncSession as AsyncSessionType
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    create_async_engine,
-    AsyncSession as AsyncSessionType,
-    AsyncEngine,
-)
-
-from app.api import users, transactions
-from app.settings import Settings
+from app.api import health, transactions, users
 from app.api.base import get_db, get_settings
+from app.settings import Settings
 from app.utils import get_idempotency_storage
 
 
 def include_routers(app: fastapi.FastAPI) -> None:
+    app.include_router(health.ROUTER)  # Health endpoints at root level
     app.include_router(users.ROUTER, prefix="/api")
     app.include_router(transactions.ROUTER, prefix="/api")
 

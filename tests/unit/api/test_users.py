@@ -1,12 +1,13 @@
-import pytest
-from fastapi import HTTPException
-from unittest.mock import AsyncMock
 from datetime import datetime
 from decimal import Decimal
+from unittest.mock import AsyncMock
 
+import pytest
+from fastapi import HTTPException
+
+from app import schemas
 from app.api.users import create_user, get_user, get_user_balance
 from app.exceptions import UserExistsError
-from app import schemas
 
 
 class TestUserAPI:

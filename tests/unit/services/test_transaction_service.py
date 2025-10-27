@@ -2,14 +2,15 @@
 Unit tests for TransactionService.
 """
 
-import pytest
 from decimal import Decimal
 from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from fastapi import HTTPException
 
+from app import schemas
 from app.services.transaction_service import TransactionService
 from app.types import TransactionType
-from app import schemas
 
 
 class TestTransactionService:

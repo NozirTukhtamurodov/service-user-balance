@@ -1,16 +1,13 @@
 import logging
 import typing
-from fastapi import APIRouter, Depends, HTTPException, Query
 from datetime import datetime
 from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette import status
 
 from app import schemas
-from app.api.base import (
-    ExistingUser,
-    get_transaction_service,
-    get_user_service,
-)
+from app.api.base import ExistingUser, get_transaction_service, get_user_service
 from app.exceptions import UserExistsError
 from app.services.transaction_service import TransactionService
 from app.services.user_service import UserService

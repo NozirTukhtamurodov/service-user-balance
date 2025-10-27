@@ -2,13 +2,14 @@
 Unit tests for UserRepository.
 """
 
-import pytest
 from unittest.mock import AsyncMock, Mock, patch
+
+import pytest
 from sqlalchemy.exc import IntegrityError
 
-from app.repositories.user import UserRepository
 from app.exceptions import UserExistsError
 from app.models import User
+from app.repositories.user import UserRepository
 
 
 class TestUserRepository:

@@ -2,14 +2,15 @@
 Integration tests for database migrations and schema consistency.
 """
 
-import pytest
 from decimal import Decimal
-from sqlalchemy import text, inspect
-from sqlalchemy.ext.asyncio import AsyncSession
+
+import pytest
 from alembic import command
 from alembic.config import Config
+from sqlalchemy import inspect, text
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import User, Transaction
+from app.models import Transaction, User
 from app.types import TransactionType
 
 

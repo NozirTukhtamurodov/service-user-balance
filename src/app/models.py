@@ -1,14 +1,13 @@
 import datetime
 import logging
 import typing
-from decimal import Decimal
 import uuid
+from decimal import Decimal
 
 import sqlalchemy as sa
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 from app.types import TransactionType
-
 
 logger = logging.getLogger(__name__)
 

@@ -3,7 +3,6 @@ from granian.constants import Interfaces, Loops
 
 from app.settings import Settings
 
-
 if __name__ == "__main__":
     settings = Settings()
     granian.Granian(

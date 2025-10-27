@@ -56,9 +56,9 @@ spec:
 
 ### Зависимости для DevOps
 - **PostgreSQL**: Managed DB или Helm chart
-- **Redis**: Managed Redis или Helm chart
-- **Health endpoints**: `/health` и `/ready` должны быть реализованы
+- **Redis**: Managed Redis или Helm chart  
 - **Secrets**: DB и Redis credentials через Kubernetes Secrets
+- **Security Context**: Pod Security Standards compliance
 
 ## 2. Кеширование для повышения производительности
 

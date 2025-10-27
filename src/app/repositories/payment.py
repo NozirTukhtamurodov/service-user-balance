@@ -4,13 +4,13 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
+import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession as AsyncSessionType
-import sqlalchemy as sa
 
 from app import models, schemas
-from app.exceptions import UserExistsError, PaymentError
-from app.models import User, Transaction
+from app.exceptions import PaymentError, UserExistsError
+from app.models import Transaction, User
 from app.types import TransactionType
 
 logger = logging.getLogger(__name__)

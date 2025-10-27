@@ -4,10 +4,8 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import (
-    async_sessionmaker,
-    AsyncSession as AsyncSessionType,
-)
+from sqlalchemy.ext.asyncio import AsyncSession as AsyncSessionType
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from app import schemas
 from app.models import Transaction

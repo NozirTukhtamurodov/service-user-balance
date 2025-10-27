@@ -5,7 +5,6 @@ from sqlalchemy.ext import asyncio as sa
 
 from app.settings import Settings
 
-
 logger = logging.getLogger(__name__)
 
 

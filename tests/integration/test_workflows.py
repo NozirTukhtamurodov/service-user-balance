@@ -2,12 +2,13 @@
 Integration tests for complete end-to-end user workflows.
 """
 
-import pytest
 from decimal import Decimal
+
+import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import User, Transaction
+from app.models import Transaction, User
 
 
 class TestCompleteUserWorkflows:

@@ -73,7 +73,7 @@ async def notify_services(transaction: TransactionResponse, trace_id: str):
 
 ### Мониторинг
 - **Prometheus + Grafana**: Метрики приложения и инфраструктуры
-- **Jaeger/Zipkin**: Distributed tracing с trace_id для отслеживания запросов
+- **DataDog/Jaeger/Zipkin**: Distributed tracing с trace_id для отслеживания запросов
 - **ELK Stack**: Централизованные логи с correlation_id и trace_id
 - **OpenTelemetry**: Автоматическое инструментирование HTTP/gRPC вызовов
 

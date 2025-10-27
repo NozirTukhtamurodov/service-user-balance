@@ -8,20 +8,57 @@
 - **Service**: Внутренний доступ к подам
 - **Ingress**: Внешний доступ через API Gateway
 
-### Требования к окружению
+### Deployment конфигурация
 ```yaml
 # deployment.yaml
-env:
-  - name: DB_HOST
-    value: "postgres-service"
-  - name: REDIS_HOST  
-    value: "redis-service"
-  - name: DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: db-secret
-        key: password
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balance-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: balance-service
+  template:
+    spec:
+      containers:
+      - name: balance-service
+        image: balance-service:latest
+        ports:
+        - containerPort: 8000
+        env:
+          - name: DB_HOST
+            value: "postgres-service"
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: password
+          - name: REDIS_HOST
+            value: "redis-service"
+          - name: ENVIRONMENT
+            value: "production"
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+        
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
 ```
+
+### Зависимости для DevOps
+- **PostgreSQL**: Managed DB или Helm chart
+- **Redis**: Managed Redis или Helm chart
+- **Health endpoints**: `/health` и `/ready` должны быть реализованы
+- **Secrets**: DB и Redis credentials через Kubernetes Secrets
 
 ## 2. Кеширование для повышения производительности
 

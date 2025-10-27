@@ -1,0 +1,121 @@
+services:
+  # Run unit tests (fast, no database required)
+  test-unit:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: runtime
+      args:
+        - ENVIRONMENT=test
+        - poetryargs=--with dev
+    environment:
+      - PYTHONWARNINGS=ignore::RuntimeWarning
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    command: ["python", "-m", "pytest", "tests/unit/", "-v", "--no-cov", "--tb=short", "-p", "no:cacheprovider"]
+
+  # Run integration tests (requires database)
+  test-integration:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: runtime
+      args:
+        - ENVIRONMENT=test
+        - poetryargs=--with dev
+    environment:
+      - DEBUG=false
+      - DB_ECHO=false
+      - DATABASE_URL=postgresql+asyncpg://test_user:test_password@test-db:5432/test_db
+      - REDIS_HOST=test-redis
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./migrations:/app/migrations
+      - ./alembic.ini:/app/alembic.ini
+    depends_on:
+      test-db:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    command: ["python", "-m", "pytest", "tests/integration/", "-v", "--no-cov", "--tb=short", "-p", "no:cacheprovider"]
+
+  # Run all tests (unit + integration)
+  test-all:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: runtime
+      args:
+        - ENVIRONMENT=test
+        - poetryargs=--with dev
+    environment:
+      - DEBUG=false
+      - DB_ECHO=false
+      - DATABASE_URL=postgresql+asyncpg://test_user:test_password@test-db:5432/test_db
+      - REDIS_HOST=test-redis
+      - PYTHONWARNINGS=ignore::RuntimeWarning
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./migrations:/app/migrations
+      - ./alembic.ini:/app/alembic.ini
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: ["python", "-m", "pytest", "tests/", "-v", "--no-cov", "--tb=short", "-p", "no:cacheprovider"]
+
+  # Run tests with coverage (separate service to handle coverage properly)
+  test-coverage:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: runtime
+      args:
+        - ENVIRONMENT=test
+        - poetryargs=--with dev
+    environment:
+      - DEBUG=false
+      - DB_ECHO=false
+      - DATABASE_URL=postgresql+asyncpg://test_user:test_password@test-db:5432/test_db
+      - REDIS_HOST=test-redis
+      - COVERAGE_FILE=/tmp/.coverage
+      - PYTHONWARNINGS=ignore::RuntimeWarning
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./migrations:/app/migrations
+      - ./alembic.ini:/app/alembic.ini
+    depends_on:
+      test-db:
+        condition: service_healthy
+      test-redis:
+        condition: service_healthy
+    tmpfs:
+      - /tmp:size=100M  # Temporary filesystem for coverage data
+    command: ["sh", "-c", "python -m pytest tests/ -v --cov=src --cov-report=term-missing --cov-report=html:/tmp/htmlcov --tb=short -p no:cacheprovider || true"]
+
+  test-db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=test_db
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d test_db"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    tmpfs:
+      - /var/lib/postgresql/data  # Use in-memory storage for faster tests
+
+  test-redis:
+    image: redis:8.2.2-bookworm
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    tmpfs:
+      - /data  # Use in-memory storage for faster tests

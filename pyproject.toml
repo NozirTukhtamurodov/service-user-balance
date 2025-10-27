@@ -1,0 +1,93 @@
+[tool.poetry]
+name = "app"
+version = "0"
+description = ""
+authors = [
+    "Artur Shiriev <me@shiriev.ru>",
+    "List Family Team <support@list.family>"
+]
+license = "MIT License"
+packages = [
+    {from = "src", include = "app"}
+]
+
+[tool.poetry.dependencies]
+python = "3.12.*"
+fastapi = ">=0.76"
+pydantic-settings = "*"
+granian = "*"
+alembic = "*"
+psycopg2-binary = "*"
+sqlalchemy = "*"
+asyncpg = "*"
+uvloop = "*"
+black = "^25.9.0"
+redis = "*"
+
+[tool.poetry.group.dev.dependencies]
+polyfactory = "*"
+httpx = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-asyncio = "*"
+ruff = "*"
+mypy = "*"
+asyncpg-stubs = "*"
+aiosqlite = "*"
+greenlet = "*"
+
+[tool.ruff]
+fix = true
+unsafe-fixes = true
+line-length = 120
+target-version = "py311"
+extend-exclude = ["bin"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D1", # allow missing docstrings
+    "FBT", # allow boolean args
+    "ANN101", # missing-type-self
+    "ANN102", # missing-type-cls
+    "INP", # ignore flake8-no-pep420
+    "B008", # function-call-in-default-argument
+    "ANN204", # no typings for __init__
+    "RUF001", # allow cyrillic letters
+    "D203", # "one-blank-line-before-class" conflicting with D211
+    "D213", # "multi-line-summary-second-line" conflicting with D212
+    "COM812", # flake8-commas "Trailing comma missing"
+    "ISC001", # flake8-implicit-str-concat
+]
+isort.lines-after-imports = 2
+isort.no-lines-before = ["standard-library", "local-folder"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/*.py" = [
+    "S101", # allow asserts
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+pretty = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=. --cov-report term-missing --tb=short"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore:coroutine.*was never awaited:RuntimeWarning",
+    "ignore::RuntimeWarning:weakref",
+    "ignore::RuntimeWarning:_pytest.unraisableexception",
+    "ignore::RuntimeWarning:unittest.mock",
+    "ignore::pytest.PytestUnraisableExceptionWarning",
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "if typing.TYPE_CHECKING:",
+]
+
+[tool.coverage.run]
+concurrency = ["thread","greenlet"]

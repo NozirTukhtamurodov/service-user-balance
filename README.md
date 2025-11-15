@@ -56,17 +56,3 @@ alembic revision --autogenerate -m "description"
 # Откатить последнюю миграцию
 alembic downgrade -1
 ```
-
-## 📡 API Endpoints
-
-- **POST /users** - Создание пользователя
-- **GET /users/{user_id}** - Информация о пользователе  
-- **GET /users/{user_id}/balance** - Баланс пользователя
-- **POST /transactions** - Создание транзакции (DEPOSIT/WITHDRAW)
-- **GET /transactions/{transaction_uid}** - Информация о транзакции
-
-Swagger UI доступен по адресу: http://localhost:8000/docs
-
-## 🏗️ Архитектура
-
-Подробная документация по архитектуре и требованиям K8s: [ARCHITECTURE.md](./ARCHITECTURE.md)

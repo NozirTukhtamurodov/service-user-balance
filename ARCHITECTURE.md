@@ -10,18 +10,6 @@
 
 ### Deployment конфигурация
 ```yaml
-# deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: balance-service
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: balance-service
-  template:
-    spec:
       containers:
       - name: balance-service
         image: balance-service:latest

@@ -190,9 +190,3 @@ async with transaction():
     new_balance = calculate_withdrawal_balance(user.balance, amount)
     await update_user_balance(user_id, new_balance)
 ```
-
-### Многоуровневая защита
-1. **Database Level**: CHECK constraint на уровне БД
-2. **Application Level**: Валидация в бизнес-логике
-3. **Concurrent Safety**: SELECT FOR UPDATE блокировка
-4. **Transaction Atomicity**: Rollback при любой ошибке

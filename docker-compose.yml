@@ -27,7 +27,7 @@ services:
       - DB_ECHO=true
       - REDIS_HOST=redis
     command:
-      ["python", "-m", "app"]
+    
 
   db:
     image: postgres:14
